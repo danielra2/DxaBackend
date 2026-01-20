@@ -5,9 +5,11 @@ import mycode.dxa.user.mappers.UserMapper;
 import mycode.dxa.user.models.User;
 import mycode.dxa.user.models.UserType;
 import mycode.dxa.user.repository.UserRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class UserQueryServiceImpl implements UserQueryService {
     private UserRepository userRepository;
     private UserMapper userMapper;

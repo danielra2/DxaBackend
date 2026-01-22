@@ -22,6 +22,7 @@ public record CreateStudentDto(
 
         String phone,
 
-        // Opțional: Instructorul poate seta direct când expiră abonamentul la creare
-        LocalDate subscriptionExpirationDate
+        LocalDate subscriptionExpirationDate,
+        Double lastPaymentAmount,
+        Double nextPaymentAmount
 ) {}

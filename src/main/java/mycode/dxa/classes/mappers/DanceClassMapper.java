@@ -1,8 +1,10 @@
 package mycode.dxa.classes.mappers;
 
+import mycode.dxa.classes.dtos.ClassStudentDto;
 import mycode.dxa.classes.dtos.CreateDanceClassDto;
 import mycode.dxa.classes.dtos.DanceClassResponse;
 import mycode.dxa.classes.models.DanceClass;
+import mycode.dxa.enrollment.models.Enrollment;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,7 +18,8 @@ public class DanceClassMapper {
                 danceClass.getTitle(),
                 danceClass.getDescription(),
                 danceClass.getSchedule(),
-                danceClass.getLocation()
+                danceClass.getLocation(),
+                mapEnrollmentsToStudents(danceClass.getEnrollments()) // Mapăm studenții
         );
     }
 
@@ -31,5 +34,18 @@ public class DanceClassMapper {
         danceClass.setSchedule(dto.schedule());
         danceClass.setLocation(dto.location());
         return danceClass;
+    }
+
+    // Metoda ajutătoare pentru a extrage studenții din înscrieri
+    private List<ClassStudentDto> mapEnrollmentsToStudents(List<Enrollment> enrollments) {
+        if (enrollments == null) return List.of();
+
+        return enrollments.stream()
+                .map(e -> new ClassStudentDto(
+                        e.getStudent().getId(),
+                        e.getStudent().getFirstName() + " " + e.getStudent().getLastName(),
+                        e.isParticipated()
+                ))
+                .toList();
     }
 }

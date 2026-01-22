@@ -24,4 +24,9 @@ public class EnrollmentController implements EnrollmentControllerApi {
         enrollmentService.unenrollStudent(studentId, classId);
         return ResponseEntity.ok("Studentul a fost șters de la curs!");
     }
+    @Override
+    public ResponseEntity<Void> toggleParticipation(Long studentId, Long classId, boolean participated) {
+        enrollmentService.toggleParticipation(studentId, classId, participated);
+        return ResponseEntity.ok().build();
+    }
 }

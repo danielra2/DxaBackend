@@ -16,4 +16,11 @@ public interface EnrollmentControllerApi {
     @DeleteMapping("/student/{studentId}/class/{classId}")
     @Operation(summary = "Dezabonare student", description = "Sterge inscrierea unui student de la un curs")
     ResponseEntity<String> unenrollStudent(@PathVariable Long studentId, @PathVariable Long classId);
+
+    // ... (celelalte metode) ...
+
+    @PutMapping("/student/{studentId}/class/{classId}/participation")
+    @Operation(summary = "Actualizare participare", description = "Marcheaza daca studentul a participat sau nu")
+    ResponseEntity<Void> toggleParticipation(@PathVariable Long studentId, @PathVariable Long classId, @RequestParam boolean participated);
+
 }

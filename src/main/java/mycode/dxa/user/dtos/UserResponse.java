@@ -1,7 +1,7 @@
 package mycode.dxa.user.dtos;
 
 import java.time.LocalDate;
-import java.util.List; // Import nou
+import java.util.List;
 
 public record UserResponse(
         Long id,
@@ -11,6 +11,10 @@ public record UserResponse(
         String phone,
         String status,
         LocalDate subscriptionExpirationDate,
+
+        // Date financiare
         Double lastPaymentAmount,
-        List<EnrolledClassDto> enrolledClasses // <--- Câmp NOU
+        Double nextPaymentAmount, // <--- Câmp Adăugat
+
+        List<EnrolledClassDto> enrolledClasses
 ) {}

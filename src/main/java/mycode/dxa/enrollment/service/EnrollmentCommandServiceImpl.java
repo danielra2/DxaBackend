@@ -47,4 +47,12 @@ public class EnrollmentCommandServiceImpl implements EnrollmentCommandService {
 
         enrollmentRepository.delete(enrollment);
     }
+    @Override
+    public void toggleParticipation(Long studentId, Long classId, boolean participated) {
+        Enrollment enrollment = enrollmentRepository.findByStudentIdAndDanceClassId(studentId, classId)
+                .orElseThrow(() -> new RuntimeException("Înscrierea nu a fost găsită!"));
+
+        enrollment.setParticipated(participated);
+        enrollmentRepository.save(enrollment);
+    }
 }

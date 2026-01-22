@@ -7,11 +7,16 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy; // IMPORTANT
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -28,7 +33,6 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // Bean necesar pentru a putea face login programatic în Controller
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
@@ -37,22 +41,40 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                // --- AICI ESTE CHEIA: Activăm CORS folosind configurația de mai jos ---
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Păstrăm publice resursele statice și endpoint-urile de auth
                         .requestMatchers("/api/auth/**", "/css/**", "/js/**", "/images/**").permitAll()
-                        // Restul endpoint-urilor necesită autentificare
                         .anyRequest().authenticated()
                 )
-                // TRECEREA LA STATELESS (Fără sesiuni)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                // Adăugăm filtrul nostru JWT înaintea filtrului standard de user/parolă
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-        // Am scos httpBasic() pentru că acum folosim Tokeni!
-
         return http.build();
+    }
+
+    // --- CONFIGURAȚIA CORS ---
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        // 1. Permitem originile Frontend-ului (Vite rulează de obicei pe 5173 sau 5174)
+        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:5174"));
+
+        // 2. Permitem metodele HTTP standard
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        // 3. Permitem orice header (critic pentru Authorization Header)
+        configuration.setAllowedHeaders(List.of("*"));
+
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }

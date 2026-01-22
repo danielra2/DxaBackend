@@ -16,10 +16,12 @@ public interface UserControllerApi {
 
     @GetMapping("/users")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Lista tuturor utilizatorilor", description = "Returneaza lista completa de studenti (momentan doar studenti conform implementarii)")
+    @Operation(summary = "Lista tuturor utilizatorilor", description = "Returneaza lista completa de studenti")
     UserListResponse getAllUsers();
 
-    @PostMapping("/student")
+    // --- MODIFICARE AICI ---
+    // Am schimbat din "/student" în "/users/student" ca să se potrivească cu cererea ta
+    @PostMapping("/users/student")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Inregistrare student", description = "Creeaza un nou cont de tip student")
     UserResponse createStudent(@Valid @RequestBody CreateStudentDto createStudentDto);

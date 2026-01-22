@@ -7,6 +7,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 public class DataInitializer implements CommandLineRunner {
 
@@ -20,20 +22,33 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Verificăm dacă există deja adminul ca să nu-l creăm de două ori
-        if (!userRepository.existsByEmail("admin@dxa.com")) {
+        String adminEmail = "admin@dxa.com";
+        String adminPass = "admin123";
+
+        // Caută dacă există adminul
+        Optional<User> existingAdmin = userRepository.findByEmail(adminEmail);
+
+        if (existingAdmin.isEmpty()) {
+            // Cazul 1: Nu există, îl creăm de la zero
             User admin = new User();
-            admin.setEmail("admin@dxa.com");
+            admin.setEmail(adminEmail);
             admin.setFirstName("Super");
             admin.setLastName("Admin");
             admin.setPhone("0000000000");
-            // Setăm parola criptată
-            admin.setPassword(passwordEncoder.encode("admin123"));
-            // Setăm tipul ADMIN
+            admin.setPassword(passwordEncoder.encode(adminPass));
             admin.setUserType(UserType.ADMIN);
-
             userRepository.save(admin);
-            System.out.println(">>> CONTUL DE ADMIN A FOST CREAT: admin@dxa.com / admin123 <<<");
+            System.out.println(">>> CONTUL DE ADMIN A FOST CREAT NOU <<<");
+        } else {
+            // Cazul 2: Există deja, dar ÎI RESCRIEM PAROLA ca să fim siguri
+            User admin = existingAdmin.get();
+            admin.setPassword(passwordEncoder.encode(adminPass));
+            // Asigură-te că e ADMIN
+            if (admin.getUserType() != UserType.ADMIN) {
+                admin.setUserType(UserType.ADMIN);
+            }
+            userRepository.save(admin);
+            System.out.println(">>> PAROLA DE ADMIN A FOST ACTUALIZATĂ/RESETATĂ <<<");
         }
     }
 }

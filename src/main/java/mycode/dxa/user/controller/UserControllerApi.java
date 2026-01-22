@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Users", description = "Operatii pentru gestionarea utilizatorilor")
 public interface UserControllerApi {
 
-    @GetMapping
+    @GetMapping("/users")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Lista tuturor utilizatorilor", description = "Returneaza lista completa de studenti (momentan doar studenti conform implementarii)")
     UserListResponse getAllUsers();

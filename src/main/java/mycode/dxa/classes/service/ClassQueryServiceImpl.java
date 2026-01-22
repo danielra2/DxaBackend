@@ -12,12 +12,10 @@ import java.util.List;
 @Transactional(readOnly = true)
 
 public class ClassQueryServiceImpl implements ClassQueryService {
-    private ClassQueryService classQueryService;
     private DanceClassMapper danceClassMapper;
     private DanceClassRepository danceClassRepository;
 
-    public ClassQueryServiceImpl(ClassQueryService classQueryService,DanceClassMapper danceClassMapper,DanceClassRepository danceClassRepository){
-        this.classQueryService=classQueryService;
+    public ClassQueryServiceImpl(DanceClassMapper danceClassMapper,DanceClassRepository danceClassRepository){
         this.danceClassMapper=danceClassMapper;
         this.danceClassRepository=danceClassRepository;
     }

@@ -2,6 +2,7 @@ package mycode.dxa.user.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import mycode.dxa.user.dtos.CreateStudentDto;
+import mycode.dxa.user.dtos.UpdateUserDto;
 import mycode.dxa.user.dtos.UserListResponse;
 import mycode.dxa.user.dtos.UserResponse;
 import mycode.dxa.user.service.UserCommandService;
@@ -31,4 +32,11 @@ public class UserController implements UserControllerApi {
         log.info("POST /api/users/student - creating student: {}", createStudentDto.email());
         return userCommandService.createStudent(createStudentDto);
     }
+
+    @Override
+    public UserResponse updateUser(Long id, UpdateUserDto updateUserDto) {
+        log.info("PUT /api/admin/users/{} - update requested", id);
+        return userCommandService.updateUser(id, updateUserDto);
+    }
+
 }

@@ -1,8 +1,12 @@
 package mycode.dxa.user.mappers;
 
+import mycode.dxa.user.dtos.CreateStudentDto;
+import mycode.dxa.user.dtos.EnrolledClassDto;
 import mycode.dxa.user.dtos.UserListResponse;
 import mycode.dxa.user.dtos.UserResponse;
+import mycode.dxa.enrollment.models.Enrollment;
 import mycode.dxa.user.models.User;
+import mycode.dxa.user.models.UserType;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -26,7 +30,9 @@ public class UserMapper {
                 cleanText(user.getPhone()),
                 calculateStudentStatus(user.getSubscriptionExpirationDate()), // Logica de business
                 user.getSubscriptionExpirationDate(),
-                user.getLastPaymentAmount()
+                user.getLastPaymentAmount(),
+                // AICI MAPĂM LISTA DE CURSURI
+                mapEnrollmentsToDto(user.getEnrollments())
         );
     }
 
@@ -40,20 +46,53 @@ public class UserMapper {
         return new UserListResponse(mapUserListToUserResponseList(list));
     }
 
-    //CREATE STUDENT DTOOOO
-    public User mapCreateStudentDtoToUser(mycode.dxa.user.dtos.CreateStudentDto dto) {
+    // CREATE STUDENT DTO -> User Entity
+    public User mapCreateStudentDtoToUser(CreateStudentDto dto) {
         Objects.requireNonNull(dto, "DTO-ul de creare este null");
 
         User user = new User();
         user.setFirstName(dto.firstName());
         user.setLastName(dto.lastName());
         user.setEmail(dto.email());
-        user.setPassword(dto.password()); // Momentan text simplu, pe viitor se va cripta
+        user.setPassword(dto.password()); // Parola vine text simplu, va fi criptată în Service
         user.setPhone(dto.phone());
-        user.setUserType(mycode.dxa.user.models.UserType.STUDENT);
+        user.setUserType(UserType.STUDENT);
         user.setSubscriptionExpirationDate(dto.subscriptionExpirationDate());
 
         return user;
+    }
+    public void updateUserFromDto(mycode.dxa.user.dtos.UpdateUserDto dto, User user) {
+        if (dto.firstName() != null) user.setFirstName(dto.firstName());
+        if (dto.lastName() != null) user.setLastName(dto.lastName());
+        if (dto.phone() != null) user.setPhone(dto.phone());
+
+        // Dacă adminul schimbă data expirării, statusul se va recalcula automat la următorul GET
+        if (dto.subscriptionExpirationDate() != null) {
+            user.setSubscriptionExpirationDate(dto.subscriptionExpirationDate());
+        }
+
+        if (dto.lastPaymentAmount() != null) user.setLastPaymentAmount(dto.lastPaymentAmount());
+        if (dto.nextPaymentAmount() != null) user.setNextPaymentAmount(dto.nextPaymentAmount());
+    }
+
+    // --- METODĂ NOUĂ PENTRU CURSURI ---
+    private List<EnrolledClassDto> mapEnrollmentsToDto(List<Enrollment> enrollments) {
+        // Dacă lista e nullă sau goală, returnăm o listă goală ca să nu crape frontend-ul
+        if (enrollments == null || enrollments.isEmpty()) {
+            return List.of();
+        }
+
+        return enrollments.stream()
+                .map(enrollment -> {
+                    // Navigăm prin JPA: Enrollment -> DanceClass
+                    var danceClass = enrollment.getDanceClass();
+                    return new EnrolledClassDto(
+                            danceClass.getId(),
+                            danceClass.getTitle(),
+                            danceClass.getSchedule()
+                    );
+                })
+                .toList(); // .toList() e disponibil din Java 16+ (tu ai setat Java 17)
     }
 
 
@@ -74,8 +113,6 @@ public class UserMapper {
 
 
     // METODE UTILITARE
-
-
     private static String trim(String s) {
         return s == null ? null : s.trim();
     }

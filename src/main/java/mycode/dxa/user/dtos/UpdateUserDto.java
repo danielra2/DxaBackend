@@ -1,16 +1,15 @@
 package mycode.dxa.user.dtos;
 
 import java.time.LocalDate;
-import java.util.List; // Import nou
 
-public record UserResponse(
-        Long id,
+public record UpdateUserDto(
         String firstName,
         String lastName,
-        String email,
         String phone,
-        String status,
+
+        // Modificând asta, schimbi automat și STATUSUL (Active/Dormant)
         LocalDate subscriptionExpirationDate,
+
         Double lastPaymentAmount,
-        List<EnrolledClassDto> enrolledClasses // <--- Câmp NOU
+        Double nextPaymentAmount // Câmpul nou
 ) {}

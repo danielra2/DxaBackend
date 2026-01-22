@@ -43,11 +43,16 @@ public class User {
 
     private String phone;
 
+    // --- ACESTA CONTROLEAZĂ STATUSUL (Active/Expired) ---
     @Column(name = "subscription_expiration_date")
     private LocalDate subscriptionExpirationDate;
 
+    // --- CÂMPURI FINANCIARE ---
     @Column(name = "last_payment_amount")
-    private Double lastPaymentAmount;
+    private Double lastPaymentAmount; // Cât a plătit ultima dată
+
+    @Column(name = "next_payment_amount")
+    private Double nextPaymentAmount; // Cât are de plătit data viitoare (CÂMP NOU)
 
     @Enumerated(EnumType.STRING)
     @Column(name = "last_payment_method")

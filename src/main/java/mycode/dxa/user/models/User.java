@@ -43,24 +43,24 @@ public class User {
 
     private String phone;
 
-    // --- ACESTA CONTROLEAZĂ STATUSUL (Active/Expired) ---
     @Column(name = "subscription_expiration_date")
     private LocalDate subscriptionExpirationDate;
 
-    // --- CÂMPURI FINANCIARE ---
     @Column(name = "last_payment_amount")
-    private Double lastPaymentAmount; // Cât a plătit ultima dată
+    private Double lastPaymentAmount;
 
     @Column(name = "next_payment_amount")
-    private Double nextPaymentAmount; // Cât are de plătit data viitoare (CÂMP NOU)
+    private Double nextPaymentAmount;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "last_payment_method")
     private PaymentMethod lastPaymentMethod;
 
     @ManyToMany(mappedBy = "instructors", fetch = FetchType.LAZY)
+    @ToString.Exclude // <--- OBLIGATORIU: Previne bucla infinită
     private List<DanceClass> teachingClasses;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude // <--- OBLIGATORIU: Previne bucla infinită
     private List<Enrollment> enrollments;
 }

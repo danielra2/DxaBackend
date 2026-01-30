@@ -19,8 +19,7 @@ public interface UserControllerApi {
     @Operation(summary = "Lista tuturor utilizatorilor", description = "Returneaza lista completa de studenti")
     UserListResponse getAllUsers();
 
-    // --- MODIFICARE AICI ---
-    // Am schimbat din "/student" în "/users/student" ca să se potrivească cu cererea ta
+    // --- AICI AM FĂCUT CORECTURA: din "/student" în "/users/student" ---
     @PostMapping("/users/student")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Inregistrare student", description = "Creeaza un nou cont de tip student")

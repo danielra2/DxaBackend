@@ -19,10 +19,12 @@ public class Enrollment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id", nullable = false)
+    @ToString.Exclude // <--- CRITIC: Fără asta crapă când listezi studenții
     private User student;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "class_id", nullable = false)
+    @ToString.Exclude // <--- CRITIC
     private DanceClass danceClass;
 
     @Column(name = "enrolled_at")
@@ -31,7 +33,6 @@ public class Enrollment {
     @Enumerated(EnumType.STRING)
     private EnrollmentStatus status = EnrollmentStatus.ACTIVE;
 
-    // --- CÂMP NOU ---
     @Column(name = "participated")
-    private boolean participated = false; // Implicit e false (nebifat)
+    private boolean participated = false;
 }

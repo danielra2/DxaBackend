@@ -28,17 +28,16 @@ public class DanceClass {
 
     private String location;
 
-
-    // Un curs poate fi predat de mai multi instructori.
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "class_instructors", // Numele tabelei noi de legătură
+            name = "class_instructors",
             joinColumns = @JoinColumn(name = "class_id"),
             inverseJoinColumns = @JoinColumn(name = "instructor_id")
     )
+    @ToString.Exclude // <--- ADAUGĂ AICI
     private List<User> instructors;
 
-
     @OneToMany(mappedBy = "danceClass", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude // <--- ADAUGĂ AICI
     private List<Enrollment> enrollments;
 }

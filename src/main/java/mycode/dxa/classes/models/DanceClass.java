@@ -34,10 +34,10 @@ public class DanceClass {
             joinColumns = @JoinColumn(name = "class_id"),
             inverseJoinColumns = @JoinColumn(name = "instructor_id")
     )
-    @ToString.Exclude // <--- ADAUGĂ AICI
+    @ToString.Exclude
     private List<User> instructors;
 
     @OneToMany(mappedBy = "danceClass", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude // <--- ADAUGĂ AICI
+    @ToString.Exclude
     private List<Enrollment> enrollments;
 }

@@ -59,7 +59,7 @@ public class UserMapper {
         user.setSubscriptionExpirationDate(dto.subscriptionExpirationDate());
 
         // MAPARE LA CREARE
-        user.setLastPaymentAmount(dto.lastPaymentAmount());
+        user.setLastPaymentAmount(dto.lastPaymentAmount() != null ? dto.lastPaymentAmount() : 0.0);
         user.setNextPaymentAmount(dto.nextPaymentAmount());
 
         return user;

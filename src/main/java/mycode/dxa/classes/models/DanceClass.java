@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import mycode.dxa.enrollment.models.Enrollment;
 import mycode.dxa.user.models.User;
-
 import java.util.List;
 
 @Entity

@@ -3,6 +3,7 @@ package mycode.dxa.attendance.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import mycode.dxa.attendance.dtos.MarkAttendanceDto;
+import mycode.dxa.attendance.dtos.StudentStatsDto;
 import mycode.dxa.classes.dtos.DanceClassResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,4 +26,12 @@ public interface AttendanceControllerApi {
     @PostMapping("/attendance")
     @Operation(summary = "Marcare prezenta", description = "Bifeaza sau debifeaza prezenta unui student")
     ResponseEntity<Void> markAttendance(@RequestBody MarkAttendanceDto dto);
+
+
+    @GetMapping("/attendance/student/{studentId}/stats")
+    @Operation(summary = "Statistici student", description = "Returneaza rata de prezenta si istoricul pe o perioada data (WEEK/MONTH)")
+    ResponseEntity<StudentStatsDto> getStudentStats(
+            @PathVariable Long studentId,
+            @RequestParam(defaultValue = "MONTH") String range
+    );
 }

@@ -57,10 +57,10 @@ public class User {
     private PaymentMethod lastPaymentMethod;
 
     @ManyToMany(mappedBy = "instructors", fetch = FetchType.LAZY)
-    @ToString.Exclude // <--- OBLIGATORIU: Previne bucla infinită
+    @ToString.Exclude
     private List<DanceClass> teachingClasses;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude // <--- OBLIGATORIU: Previne bucla infinită
+    @ToString.Exclude
     private List<Enrollment> enrollments;
 }

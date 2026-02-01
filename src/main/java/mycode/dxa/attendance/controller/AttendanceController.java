@@ -1,6 +1,7 @@
 package mycode.dxa.attendance.controller;
 
 import mycode.dxa.attendance.dtos.MarkAttendanceDto;
+import mycode.dxa.attendance.dtos.StudentStatsDto;
 import mycode.dxa.attendance.service.AttendanceCommandService;
 import mycode.dxa.attendance.service.AttendanceQueryService;
 import mycode.dxa.classes.dtos.DanceClassResponse;
@@ -31,5 +32,10 @@ public class AttendanceController implements AttendanceControllerApi {
         // Delegăm către Command Service-ul din pachetul attendance
         attendanceCommandService.markAttendance(dto);
         return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<StudentStatsDto> getStudentStats(Long studentId, String range) {
+        return ResponseEntity.ok(attendanceQueryService.getStudentStats(studentId, range));
     }
 }

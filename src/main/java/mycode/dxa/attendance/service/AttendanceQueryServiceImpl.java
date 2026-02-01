@@ -1,5 +1,7 @@
 package mycode.dxa.attendance.service;
 
+import mycode.dxa.attendance.dtos.AttendanceRecordDto;
+import mycode.dxa.attendance.dtos.StudentStatsDto;
 import mycode.dxa.attendance.models.Attendance;
 import mycode.dxa.attendance.repository.AttendanceRepository;
 import mycode.dxa.classes.dtos.ClassStudentDto;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -50,5 +53,23 @@ public class AttendanceQueryServiceImpl implements AttendanceQueryService {
                 danceClass.getLocation(),
                 studentDtos
         );
+    }
+    @Override
+    public StudentStatsDto getStudentStats(Long studentId, String range) {
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate;
+
+        if ("WEEK".equalsIgnoreCase(range)) {
+            startDate = endDate.minusDays(7);
+        } else {
+            startDate = endDate.minusDays(30);
+        }
+        List<Attendance> records = attendanceRepository.findByStudentIdAndDateBetween(studentId, startDate, endDate);
+        int totalClasses = records.size();
+        int attendedClasses = (int) records.stream().filter(Attendance::isPresent).count();
+        double rate = totalClasses == 0 ? 0.0 : ((double) attendedClasses / totalClasses) * 100;
+        List<AttendanceRecordDto> history = records.stream()
+                .sorted(Comparator.comparing(Attendance::getDate).reversed()).map(a -> new AttendanceRecordDto(a.getDanceClass().getTitle(), a.getDate(), a.isPresent())).toList();
+        return new StudentStatsDto(rate, totalClasses, attendedClasses, history);
     }
 }

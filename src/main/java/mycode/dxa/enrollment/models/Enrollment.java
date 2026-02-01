@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import mycode.dxa.classes.models.DanceClass;
 import mycode.dxa.user.models.User;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -19,12 +18,12 @@ public class Enrollment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id", nullable = false)
-    @ToString.Exclude // <--- CRITIC: Fără asta crapă când listezi studenții
+    @ToString.Exclude // <--- ADAUGĂ ACEASTĂ LINIE
     private User student;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "class_id", nullable = false)
-    @ToString.Exclude // <--- CRITIC
+    @ToString.Exclude // <--- ADAUGĂ ACEASTĂ LINIE
     private DanceClass danceClass;
 
     @Column(name = "enrolled_at")
@@ -35,4 +34,13 @@ public class Enrollment {
 
     @Column(name = "participated")
     private boolean participated = false;
+
+
+    public boolean isParticipated() {
+        return participated;
+    }
+
+    public void setParticipated(boolean participated) {
+        this.participated = participated;
+    }
 }

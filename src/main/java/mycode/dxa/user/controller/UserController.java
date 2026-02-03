@@ -21,7 +21,6 @@ public class UserController implements UserControllerApi {
         this.userQueryService = userQueryService;
     }
 
-    // --- MODIFICARE AICI: Adăugăm parametrii în apel ---
     @Override
     public UserListResponse getAllUsers(String search, String status, Long courseId) {
         log.info("GET /api/users requested with filters: search={}, status={}, course={}", search, status, courseId);

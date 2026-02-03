@@ -24,7 +24,6 @@ public interface UserControllerApi {
             @Parameter(description = "ID-ul cursului") @RequestParam(required = false) Long courseId
     );
 
-    // --- AICI AM FĂCUT CORECTURA: din "/student" în "/users/student" ---
     @PostMapping("/users/student")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Inregistrare student", description = "Creeaza un nou cont de tip student")

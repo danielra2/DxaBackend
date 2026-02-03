@@ -15,18 +15,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
     boolean existsByEmail(String email);
-
-    // Păstrăm și metoda veche, e utilă
     List<User> findAllByUserType(UserType userType);
 
-    // --- ACEASTA ESTE METODA CARE ÎȚI LIPSEȘTE PENTRU FRONTEND ---
     @Query("SELECT DISTINCT u FROM User u " +
             "LEFT JOIN u.enrollments e " +
             "WHERE u.userType = 'STUDENT' " +
             "AND (:search IS NULL OR LOWER(u.firstName) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(u.lastName) LIKE LOWER(CONCAT('%', :search, '%'))) " +
             "AND (:status IS NULL OR " +
-            "    (:status = 'Active' AND u.subscriptionExpirationDate >= CURRENT_DATE) OR " +
-            "    (:status = 'Inactive' AND (u.subscriptionExpirationDate < CURRENT_DATE OR u.subscriptionExpirationDate IS NULL))" +
+            "    (:status = 'Active' AND (u.subscriptionExpirationDate IS NOT NULL AND u.subscriptionExpirationDate >= CURRENT_DATE)) OR " +
+            "    (:status = 'Inactive' AND (u.subscriptionExpirationDate IS NULL OR u.subscriptionExpirationDate < CURRENT_DATE))" +
             ") " +
             "AND (:courseId IS NULL OR e.danceClass.id = :courseId)")
     List<User> findStudentsWithFilters(

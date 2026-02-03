@@ -21,7 +21,6 @@ public class UserQueryServiceImpl implements UserQueryService {
         this.userMapper = userMapper;
     }
 
-
     @Override
     public UserListResponse getAllUsers(String search, String status, Long courseId) {
         List<User> students = userRepository.findStudentsWithFilters(search, status, courseId);

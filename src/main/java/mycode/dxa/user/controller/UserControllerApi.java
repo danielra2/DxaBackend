@@ -1,6 +1,7 @@
 package mycode.dxa.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import mycode.dxa.user.dtos.CreateStudentDto;
@@ -16,8 +17,12 @@ public interface UserControllerApi {
 
     @GetMapping("/users")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Lista tuturor utilizatorilor", description = "Returneaza lista completa de studenti")
-    UserListResponse getAllUsers();
+    @Operation(summary = "Lista tuturor utilizatorilor", description = "Returneaza lista de studenti filtrata dupa nume, status sau curs")
+    UserListResponse getAllUsers(
+            @Parameter(description = "Nume sau Prenume") @RequestParam(required = false) String search,
+            @Parameter(description = "Status (Active/Inactive)") @RequestParam(required = false) String status,
+            @Parameter(description = "ID-ul cursului") @RequestParam(required = false) Long courseId
+    );
 
     // --- AICI AM FĂCUT CORECTURA: din "/student" în "/users/student" ---
     @PostMapping("/users/student")

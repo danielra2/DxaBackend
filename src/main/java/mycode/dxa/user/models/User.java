@@ -52,6 +52,7 @@ public class User {
     @Column(name = "next_payment_amount")
     private Double nextPaymentAmount;
 
+
     @Enumerated(EnumType.STRING)
     @Column(name = "last_payment_method")
     private PaymentMethod lastPaymentMethod;
@@ -63,4 +64,19 @@ public class User {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<Enrollment> enrollments;
+
+    public String getStatus() {
+        if (subscriptionExpirationDate == null) {
+            return "Inactive";
+        }
+        if (subscriptionExpirationDate.isAfter(LocalDate.now()) || subscriptionExpirationDate.isEqual(LocalDate.now())) {
+            return "Active";
+        }
+        return "Inactive";
+    }
+
+
+    public void setStatus(String status) {
+    }
+
 }

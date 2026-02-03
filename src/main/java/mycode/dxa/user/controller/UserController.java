@@ -21,10 +21,11 @@ public class UserController implements UserControllerApi {
         this.userQueryService = userQueryService;
     }
 
+    // --- MODIFICARE AICI: Adăugăm parametrii în apel ---
     @Override
-    public UserListResponse getAllUsers() {
-        log.info("GET /api/users requested");
-        return userQueryService.getAllUsers();
+    public UserListResponse getAllUsers(String search, String status, Long courseId) {
+        log.info("GET /api/users requested with filters: search={}, status={}, course={}", search, status, courseId);
+        return userQueryService.getAllUsers(search, status, courseId);
     }
 
     @Override
@@ -38,5 +39,4 @@ public class UserController implements UserControllerApi {
         log.info("PUT /api/admin/users/{} - update requested", id);
         return userCommandService.updateUser(id, updateUserDto);
     }
-
 }

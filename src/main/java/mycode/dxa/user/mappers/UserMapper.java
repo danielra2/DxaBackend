@@ -19,20 +19,17 @@ import java.util.function.Function;
 public class UserMapper {
 
     public UserResponse mapToResponse(User user) {
-        Objects.requireNonNull(user, "User entity is null");
-
         return new UserResponse(
                 user.getId(),
-                cleanText(user.getFirstName()),
-                cleanText(user.getLastName()),
-                cleanText(user.getEmail()),
-                cleanText(user.getPhone()),
-                calculateStudentStatus(user.getSubscriptionExpirationDate()),
+                // INVERSEAZĂ AICI DACĂ E CAZUL:
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getPhone(),
+                user.getStatus(),
                 user.getSubscriptionExpirationDate(),
-                // MAPARE FINANCIARĂ
                 user.getLastPaymentAmount(),
-                user.getNextPaymentAmount(), // <--- Mapăm și acest câmp
-
+                user.getNextPaymentAmount(),
                 mapEnrollmentsToDto(user.getEnrollments())
         );
     }

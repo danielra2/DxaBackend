@@ -2,25 +2,28 @@ package mycode.dxa.enrollment.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/api/admin/enrollments")
-@Tag(name = "Enrollments", description = "Managementul inscrierilor la cursuri")
+import java.time.LocalDate;
+
+@Tag(name = "Enrollment", description = "Endpoints pentru gestionarea înscrierilor")
+@RequestMapping("/admin/enrollments")
 public interface EnrollmentControllerApi {
 
+    @Operation(summary = "Înscrie un student la un curs cu o dată specifică de expirare")
     @PostMapping("/student/{studentId}/class/{classId}")
-    @Operation(summary = "Inscriere student", description = "Inscrie un student la un curs specific")
-    ResponseEntity<String> enrollStudent(@PathVariable Long studentId, @PathVariable Long classId);
+    ResponseEntity<String> enrollStudent(
+            @PathVariable Long studentId,
+            @PathVariable Long classId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate expirationDate // ADAUGAT
+    );
 
+    @Operation(summary = "Anulează înscrierea unui student")
     @DeleteMapping("/student/{studentId}/class/{classId}")
-    @Operation(summary = "Dezabonare student", description = "Sterge inscrierea unui student de la un curs")
-    ResponseEntity<String> unenrollStudent(@PathVariable Long studentId, @PathVariable Long classId);
-
-    // ... (celelalte metode) ...
-
-    @PutMapping("/student/{studentId}/class/{classId}/participation")
-    @Operation(summary = "Actualizare participare", description = "Marcheaza daca studentul a participat sau nu")
-    ResponseEntity<Void> toggleParticipation(@PathVariable Long studentId, @PathVariable Long classId, @RequestParam boolean participated);
-
+    ResponseEntity<String> unenrollStudent(
+            @PathVariable Long studentId,
+            @PathVariable Long classId
+    );
 }

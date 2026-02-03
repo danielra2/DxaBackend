@@ -20,7 +20,7 @@ import java.util.List;
 public class AttendanceQueryServiceImpl implements AttendanceQueryService {
 
     private final AttendanceRepository attendanceRepository;
-    private final DanceClassRepository danceClassRepository; // Avem nevoie de repo-ul de cursuri
+    private final DanceClassRepository danceClassRepository;
 
     public AttendanceQueryServiceImpl(AttendanceRepository attendanceRepository, DanceClassRepository danceClassRepository) {
         this.attendanceRepository = attendanceRepository;
@@ -37,14 +37,26 @@ public class AttendanceQueryServiceImpl implements AttendanceQueryService {
     @Override
     public DanceClassResponse getClassDetailsWithAttendance(Long classId, LocalDate date) {
         DanceClass danceClass = danceClassRepository.findById(classId)
-                .orElseThrow(() -> new RuntimeException("Curs nu exista"));
+                .orElseThrow(() -> new RuntimeException("Cursul nu exista"));
+
         List<ClassStudentDto> studentDtos = danceClass.getEnrollments().stream()
+                .filter(enrollment -> {
+                    // FILTRARE: Studentul apare doar daca data cursului (date) este inaintea expirarii abonamentului specific
+                    return enrollment.getExpirationDate() != null &&
+                            (enrollment.getExpirationDate().isAfter(date) || enrollment.getExpirationDate().isEqual(date));
+                })
                 .map(enrollment -> {
                     var s = enrollment.getStudent();
                     boolean isPresent = isStudentPresent(s.getId(), classId, date);
-                    return new ClassStudentDto(s.getId(), s.getFirstName() + " " + s.getLastName(), isPresent);
+                    return new ClassStudentDto(
+                            s.getId(),
+                            s.getFirstName() + " " + s.getLastName(),
+                            isPresent,
+                            enrollment.getExpirationDate() // Trimitem data catre frontend
+                    );
                 })
                 .toList();
+
         return new DanceClassResponse(
                 danceClass.getId(),
                 danceClass.getTitle(),
@@ -54,22 +66,21 @@ public class AttendanceQueryServiceImpl implements AttendanceQueryService {
                 studentDtos
         );
     }
+
     @Override
     public StudentStatsDto getStudentStats(Long studentId, String range) {
         LocalDate endDate = LocalDate.now();
-        LocalDate startDate;
+        LocalDate startDate = "WEEK".equalsIgnoreCase(range) ? endDate.minusDays(7) : endDate.minusDays(30);
 
-        if ("WEEK".equalsIgnoreCase(range)) {
-            startDate = endDate.minusDays(7);
-        } else {
-            startDate = endDate.minusDays(30);
-        }
         List<Attendance> records = attendanceRepository.findByStudentIdAndDateBetween(studentId, startDate, endDate);
         int totalClasses = records.size();
         int attendedClasses = (int) records.stream().filter(Attendance::isPresent).count();
         double rate = totalClasses == 0 ? 0.0 : ((double) attendedClasses / totalClasses) * 100;
+
         List<AttendanceRecordDto> history = records.stream()
-                .sorted(Comparator.comparing(Attendance::getDate).reversed()).map(a -> new AttendanceRecordDto(a.getDanceClass().getTitle(), a.getDate(), a.isPresent())).toList();
+                .sorted(Comparator.comparing(Attendance::getDate).reversed())
+                .map(a -> new AttendanceRecordDto(a.getDanceClass().getTitle(), a.getDate(), a.isPresent()))
+                .toList();
         return new StudentStatsDto(rate, totalClasses, attendedClasses, history);
     }
 }

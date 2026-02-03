@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import mycode.dxa.classes.models.DanceClass;
 import mycode.dxa.user.models.User;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,6 +30,9 @@ public class Enrollment {
 
     @Column(name = "enrolled_at")
     private LocalDateTime enrolledAt = LocalDateTime.now();
+
+    @Column(name = "expiration_date") // Câmp nou pentru data de expirare per curs
+    private LocalDate expirationDate;
 
     @Enumerated(EnumType.STRING)
     private EnrollmentStatus status = EnrollmentStatus.ACTIVE;

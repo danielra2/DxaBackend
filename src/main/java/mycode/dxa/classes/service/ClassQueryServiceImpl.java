@@ -12,8 +12,8 @@ import java.util.List;
 @Transactional(readOnly = true)
 
 public class ClassQueryServiceImpl implements ClassQueryService {
-    private DanceClassMapper danceClassMapper;
-    private DanceClassRepository danceClassRepository;
+    private final DanceClassMapper danceClassMapper;
+    private final DanceClassRepository danceClassRepository;
 
     public ClassQueryServiceImpl(DanceClassMapper danceClassMapper,DanceClassRepository danceClassRepository){
         this.danceClassMapper=danceClassMapper;

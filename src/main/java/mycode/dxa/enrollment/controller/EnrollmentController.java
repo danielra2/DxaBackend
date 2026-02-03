@@ -4,6 +4,8 @@ import mycode.dxa.enrollment.service.EnrollmentCommandService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+
 @RestController
 public class EnrollmentController implements EnrollmentControllerApi {
 
@@ -14,19 +16,14 @@ public class EnrollmentController implements EnrollmentControllerApi {
     }
 
     @Override
-    public ResponseEntity<String> enrollStudent(Long studentId, Long classId) {
-        enrollmentService.enrollStudent(studentId, classId);
-        return ResponseEntity.ok("Studentul a fost înscris cu succes!");
+    public ResponseEntity<String> enrollStudent(Long studentId, Long classId, LocalDate expirationDate) {
+        enrollmentService.enrollStudent(studentId, classId, expirationDate);
+        return ResponseEntity.ok("Studentul a fost înscris cu succes până la data de " + expirationDate);
     }
 
     @Override
     public ResponseEntity<String> unenrollStudent(Long studentId, Long classId) {
         enrollmentService.unenrollStudent(studentId, classId);
-        return ResponseEntity.ok("Studentul a fost șters de la curs!");
-    }
-    @Override
-    public ResponseEntity<Void> toggleParticipation(Long studentId, Long classId, boolean participated) {
-        enrollmentService.toggleParticipation(studentId, classId, participated);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Înscrierea a fost anulată.");
     }
 }

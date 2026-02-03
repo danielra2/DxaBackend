@@ -10,6 +10,8 @@ import mycode.dxa.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+
 @Service
 @Transactional
 public class EnrollmentCommandServiceImpl implements EnrollmentCommandService {
@@ -27,16 +29,18 @@ public class EnrollmentCommandServiceImpl implements EnrollmentCommandService {
     }
 
     @Override
-    public void enrollStudent(Long studentId, Long classId) {
+    public void enrollStudent(Long studentId, Long classId, LocalDate expirationDate) {
         if (enrollmentRepository.existsByStudentIdAndDanceClassId(studentId, classId)) {
             throw new RuntimeException("Studentul este deja înscris la acest curs!");
         }
 
         User student = userRepository.findById(studentId).orElseThrow(() -> new RuntimeException("Studentul nu există!"));
         DanceClass danceClass = danceClassRepository.findById(classId).orElseThrow(() -> new RuntimeException("Cursul nu există!"));
+
         Enrollment enrollment = new Enrollment();
         enrollment.setStudent(student);
         enrollment.setDanceClass(danceClass);
+        enrollment.setExpirationDate(expirationDate); // SALVĂM DATA CALCULATĂ
         enrollment.setStatus(EnrollmentStatus.ACTIVE);
         enrollmentRepository.save(enrollment);
     }

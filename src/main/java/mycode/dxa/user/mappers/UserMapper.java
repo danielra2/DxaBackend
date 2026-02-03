@@ -34,6 +34,7 @@ public class UserMapper {
         );
     }
 
+
     // ... (celelalte metode de listare rămân neschimbate) ...
     public List<UserResponse> mapUserListToUserResponseList(List<User> list) {
         return mapList(list, this::mapToResponse);
@@ -78,20 +79,14 @@ public class UserMapper {
         if (dto.nextPaymentAmount() != null) user.setNextPaymentAmount(dto.nextPaymentAmount());
     }
 
-    private List<EnrolledClassDto> mapEnrollmentsToDto(List<Enrollment> enrollments) {
-        if (enrollments == null || enrollments.isEmpty()) {
-            return List.of();
-        }
-        return enrollments.stream()
-                .map(enrollment -> {
-                    var danceClass = enrollment.getDanceClass();
-                    return new EnrolledClassDto(
-                            danceClass.getId(),
-                            danceClass.getTitle(),
-                            danceClass.getSchedule()
-                    );
-                })
-                .toList();
+    EnrolledClassDto toEnrolledClassDto(Enrollment enrollment) {
+        if (enrollment == null || enrollment.getDanceClass() == null) return null;
+        return new EnrolledClassDto(
+                enrollment.getDanceClass().getId(),
+                enrollment.getDanceClass().getTitle(),
+                enrollment.getDanceClass().getSchedule(),
+                enrollment.getExpirationDate() // MAPARE NOUĂ
+        );
     }
 
     private String calculateStudentStatus(LocalDate expirationDate) {

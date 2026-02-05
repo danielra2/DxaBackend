@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.List;
 
 public record CreateStudentDto(
         @NotBlank(message = "Prenumele este obligatoriu")
@@ -24,5 +25,10 @@ public record CreateStudentDto(
 
         LocalDate subscriptionExpirationDate,
         Double lastPaymentAmount,
-        Double nextPaymentAmount
+        Double nextPaymentAmount,
+
+        // --- CÂMP NOU ---
+        String lastPaymentComment, // Motivul reducerii / Notă
+
+        List<Long> enrolledClassIds
 ) {}

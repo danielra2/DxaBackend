@@ -9,7 +9,6 @@ import mycode.dxa.user.models.User;
 import mycode.dxa.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 
 @Service
@@ -40,22 +39,22 @@ public class EnrollmentCommandServiceImpl implements EnrollmentCommandService {
         Enrollment enrollment = new Enrollment();
         enrollment.setStudent(student);
         enrollment.setDanceClass(danceClass);
-        enrollment.setExpirationDate(expirationDate); // SALVĂM DATA CALCULATĂ
+        enrollment.setExpirationDate(expirationDate); // Salvare dată individuală
         enrollment.setStatus(EnrollmentStatus.ACTIVE);
         enrollmentRepository.save(enrollment);
     }
 
     @Override
     public void unenrollStudent(Long studentId, Long classId) {
-        Enrollment enrollment = enrollmentRepository.findByStudentIdAndDanceClassId(studentId, classId).orElseThrow(() -> new RuntimeException("Această înscriere nu există!"));
-
+        Enrollment enrollment = enrollmentRepository.findByStudentIdAndDanceClassId(studentId, classId)
+                .orElseThrow(() -> new RuntimeException("Această înscriere nu există!"));
         enrollmentRepository.delete(enrollment);
     }
+
     @Override
     public void toggleParticipation(Long studentId, Long classId, boolean participated) {
         Enrollment enrollment = enrollmentRepository.findByStudentIdAndDanceClassId(studentId, classId)
                 .orElseThrow(() -> new RuntimeException("Înscrierea nu a fost găsită!"));
-
         enrollment.setParticipated(participated);
         enrollmentRepository.save(enrollment);
     }

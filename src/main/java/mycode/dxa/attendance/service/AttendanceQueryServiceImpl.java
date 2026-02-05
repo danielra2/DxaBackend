@@ -8,6 +8,7 @@ import mycode.dxa.classes.dtos.ClassStudentDto;
 import mycode.dxa.classes.dtos.DanceClassResponse;
 import mycode.dxa.classes.models.DanceClass;
 import mycode.dxa.classes.repository.DanceClassRepository;
+import mycode.dxa.user.models.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +35,10 @@ public class AttendanceQueryServiceImpl implements AttendanceQueryService {
                 .orElse(false);
     }
 
+
+
+    // Fișier: src/main/java/mycode/dxa/attendance/service/AttendanceQueryServiceImpl.java
+
     @Override
     public DanceClassResponse getClassDetailsWithAttendance(Long classId, LocalDate date) {
         DanceClass danceClass = danceClassRepository.findById(classId)
@@ -41,7 +46,6 @@ public class AttendanceQueryServiceImpl implements AttendanceQueryService {
 
         List<ClassStudentDto> studentDtos = danceClass.getEnrollments().stream()
                 .filter(enrollment -> {
-                    // FILTRARE: Studentul apare doar daca data cursului (date) este inaintea expirarii abonamentului specific
                     return enrollment.getExpirationDate() != null &&
                             (enrollment.getExpirationDate().isAfter(date) || enrollment.getExpirationDate().isEqual(date));
                 })
@@ -52,21 +56,16 @@ public class AttendanceQueryServiceImpl implements AttendanceQueryService {
                             s.getId(),
                             s.getFirstName() + " " + s.getLastName(),
                             isPresent,
-                            enrollment.getExpirationDate() // Trimitem data catre frontend
+                            enrollment.getExpirationDate() // Trimitem data de pe înscriere la Frontend
                     );
                 })
                 .toList();
 
         return new DanceClassResponse(
-                danceClass.getId(),
-                danceClass.getTitle(),
-                danceClass.getDescription(),
-                danceClass.getSchedule(),
-                danceClass.getLocation(),
-                studentDtos
+                danceClass.getId(), danceClass.getTitle(), danceClass.getDescription(),
+                danceClass.getSchedule(), danceClass.getLocation(), studentDtos
         );
     }
-
     @Override
     public StudentStatsDto getStudentStats(Long studentId, String range) {
         LocalDate endDate = LocalDate.now();

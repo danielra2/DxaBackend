@@ -35,20 +35,24 @@ public class UserCommandServiceImpl implements UserCommandService {
         User savedStudent = userRepository.save(student);
         return userMapper.mapToResponse(savedStudent);
     }
+    // Fișier: src/main/java/mycode/dxa/user/service/UserCommandServiceImpl.java
+
     @Override
     @Transactional
     public UserResponse updateUser(Long id, mycode.dxa.user.dtos.UpdateUserDto dto) {
-        // 1. Căutăm userul
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
-        // 2. Aplicăm modificările
+        boolean expirationChanged = dto.subscriptionExpirationDate() != null && !dto.subscriptionExpirationDate().equals(user.getSubscriptionExpirationDate());
         userMapper.updateUserFromDto(dto, user);
 
-        // 3. Salvăm (Hibernate face update automat la finalul tranzacției, dar save e explicit)
-        User savedUser = userRepository.save(user);
+        if (expirationChanged && user.getEnrollments() != null) {
+            user.getEnrollments().forEach(enrollment -> {
+                enrollment.setExpirationDate(dto.subscriptionExpirationDate());
+            });
+        }
 
-        // 4. Returnăm răspunsul actualizat
+        User savedUser = userRepository.save(user);
         return userMapper.mapToResponse(savedUser);
     }
 }

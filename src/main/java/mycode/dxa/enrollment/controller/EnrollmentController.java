@@ -1,8 +1,9 @@
 package mycode.dxa.enrollment.controller;
 
 import mycode.dxa.enrollment.service.EnrollmentCommandService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
@@ -16,13 +17,17 @@ public class EnrollmentController implements EnrollmentControllerApi {
     }
 
     @Override
-    public ResponseEntity<String> enrollStudent(Long studentId, Long classId, LocalDate expirationDate) {
+    public ResponseEntity<String> enrollStudent(
+            @PathVariable Long studentId,
+            @PathVariable Long classId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate expirationDate) {
+
         enrollmentService.enrollStudent(studentId, classId, expirationDate);
         return ResponseEntity.ok("Studentul a fost înscris cu succes până la data de " + expirationDate);
     }
 
     @Override
-    public ResponseEntity<String> unenrollStudent(Long studentId, Long classId) {
+    public ResponseEntity<String> unenrollStudent(@PathVariable Long studentId, @PathVariable Long classId) {
         enrollmentService.unenrollStudent(studentId, classId);
         return ResponseEntity.ok("Înscrierea a fost anulată.");
     }

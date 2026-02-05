@@ -37,6 +37,8 @@ public class DanceClassMapper {
     }
 
     // Metoda ajutătoare pentru a extrage studenții din înscrieri
+    // Fișier: src/main/java/mycode/dxa/classes/mappers/DanceClassMapper.java
+
     private List<ClassStudentDto> mapEnrollmentsToStudents(List<Enrollment> enrollments) {
         if (enrollments == null) return List.of();
 
@@ -44,7 +46,8 @@ public class DanceClassMapper {
                 .map(e -> new ClassStudentDto(
                         e.getStudent().getId(),
                         e.getStudent().getFirstName() + " " + e.getStudent().getLastName(),
-                        e.isParticipated()
+                        e.isParticipated(),
+                        e.getExpirationDate() // <--- ADAUGĂ ACEST AL 4-LEA ARGUMENT
                 ))
                 .toList();
     }

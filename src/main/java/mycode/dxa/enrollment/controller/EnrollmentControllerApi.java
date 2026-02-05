@@ -9,15 +9,16 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 
 @Tag(name = "Enrollment", description = "Endpoints pentru gestionarea înscrierilor")
-@RequestMapping("/admin/enrollments")
+@RequestMapping("/api/admin/enrollments")
+@Tag(name = "Enrollments", description = "Managementul inscrierilor la cursuri")
 public interface EnrollmentControllerApi {
 
-    @Operation(summary = "Înscrie un student la un curs cu o dată specifică de expirare")
     @PostMapping("/student/{studentId}/class/{classId}")
+    @Operation(summary = "Inscriere student", description = "Inscrie un student la un curs specific cu data de expirare")
     ResponseEntity<String> enrollStudent(
             @PathVariable Long studentId,
             @PathVariable Long classId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate expirationDate // ADAUGAT
+            @RequestParam LocalDate expirationDate
     );
 
     @Operation(summary = "Anulează înscrierea unui student")

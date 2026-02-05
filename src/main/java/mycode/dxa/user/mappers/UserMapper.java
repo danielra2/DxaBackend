@@ -62,7 +62,23 @@ public class UserMapper {
 
         return user;
     }
-
+    // Modifică metoda mapEnrollmentsToDto pentru a include noul câmp expirationDate
+    private List<EnrolledClassDto> mapEnrollmentsToDto(List<Enrollment> enrollments) {
+        if (enrollments == null || enrollments.isEmpty()) {
+            return List.of();
+        }
+        return enrollments.stream()
+                .map(enrollment -> {
+                    var danceClass = enrollment.getDanceClass();
+                    return new EnrolledClassDto(
+                            danceClass.getId(),
+                            danceClass.getTitle(),
+                            danceClass.getSchedule(),
+                            enrollment.getExpirationDate() // <--- ASIGURĂ-TE CĂ ACEASTĂ LINIE EXISTĂ
+                    );
+                })
+                .toList();
+    }
     // ... (restul metodelor rămân la fel: updateUserFromDto, mapEnrollmentsToDto, etc.) ...
 
     // Asigură-te că păstrezi metodele updateUserFromDto, mapEnrollmentsToDto, calculateStudentStatus și cele utilitare!

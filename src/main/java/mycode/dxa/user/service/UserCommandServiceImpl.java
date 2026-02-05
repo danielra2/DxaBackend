@@ -89,20 +89,17 @@ public class UserCommandServiceImpl implements UserCommandService {
     @Override
     @Transactional
     public UserResponse updateUser(Long id, mycode.dxa.user.dtos.UpdateUserDto dto) {
-        // ... (Codul existent pentru updateUser rămâne neschimbat)
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
-        boolean expirationChanged = dto.subscriptionExpirationDate() != null && !dto.subscriptionExpirationDate().equals(user.getSubscriptionExpirationDate());
+        // Mapăm doar câmpurile care vin în DTO
         userMapper.updateUserFromDto(dto, user);
 
-        if (expirationChanged && user.getEnrollments() != null) {
-            user.getEnrollments().forEach(enrollment -> {
-                enrollment.setExpirationDate(dto.subscriptionExpirationDate());
-            });
-        }
-
+        // Salvăm utilizatorul
         User savedUser = userRepository.save(user);
+
+        // IMPORTANT: Returnăm răspunsul fără a declanșa alte logici automate de update pe înscrieri aici,
+        // deoarece reînnoirea cursurilor se face prin endpoint-ul dedicat de Enrollments.
         return userMapper.mapToResponse(savedUser);
     }
 }

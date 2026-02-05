@@ -25,7 +25,7 @@ public class UserMapper {
                 cleanText(user.getLastName()),
                 cleanText(user.getEmail()),
                 cleanText(user.getPhone()),
-                calculateStudentStatus(user.getSubscriptionExpirationDate()),
+                calculateStudentStatus(user.getEnrollments()),
                 user.getSubscriptionExpirationDate(),
                 user.getLastPaymentAmount(),
                 user.getNextPaymentAmount(),
@@ -66,15 +66,25 @@ public class UserMapper {
         if (enrollments == null || enrollments.isEmpty()) return List.of();
         return enrollments.stream().map(enrollment -> {
             var danceClass = enrollment.getDanceClass();
-            return new EnrolledClassDto(danceClass.getId(), danceClass.getTitle(), danceClass.getSchedule());
+            return new EnrolledClassDto(
+                    danceClass.getId(),
+                    danceClass.getTitle(),
+                    danceClass.getSchedule(),
+                    enrollment.getExpirationDate() // <--- Mapăm data de pe Enrollment
+            );
         }).toList();
     }
 
-    private String calculateStudentStatus(LocalDate expirationDate) {
-        if (expirationDate == null) return "NO_SUBSCRIPTION";
+    // Noua logică pentru statusul general
+    private String calculateStudentStatus(List<Enrollment> enrollments) {
+        if (enrollments == null || enrollments.isEmpty()) return "Inactive";
         LocalDate today = LocalDate.now();
-        if (!expirationDate.isBefore(today)) return "Active";
-        return "Inactive";
+
+        // Verificăm dacă există cel puțin un curs care nu a expirat
+        boolean hasActiveCourse = enrollments.stream()
+                .anyMatch(e -> e.getExpirationDate() != null && !e.getExpirationDate().isBefore(today));
+
+        return hasActiveCourse ? "Active" : "Inactive";
     }
 
     private static String trim(String s) { return s == null ? null : s.trim(); }

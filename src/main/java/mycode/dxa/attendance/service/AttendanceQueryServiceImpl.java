@@ -46,6 +46,8 @@ public class AttendanceQueryServiceImpl implements AttendanceQueryService {
 
         List<ClassStudentDto> studentDtos = danceClass.getEnrollments().stream()
                 .filter(enrollment -> {
+                    // VERIFICARE CRITICĂ: Studentul apare în listă DOAR dacă
+                    // data abonamentului pentru ACEST curs este validă în ziua respectivă
                     return enrollment.getExpirationDate() != null &&
                             (enrollment.getExpirationDate().isAfter(date) || enrollment.getExpirationDate().isEqual(date));
                 })
@@ -56,7 +58,7 @@ public class AttendanceQueryServiceImpl implements AttendanceQueryService {
                             s.getId(),
                             s.getFirstName() + " " + s.getLastName(),
                             isPresent,
-                            enrollment.getExpirationDate() // Trimitem data de pe înscriere la Frontend
+                            enrollment.getExpirationDate() // Trimitem data specifică înscrierii
                     );
                 })
                 .toList();

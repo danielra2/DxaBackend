@@ -22,8 +22,9 @@ public class EnrollmentController implements EnrollmentControllerApi {
             @PathVariable Long classId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate expirationDate) {
 
+
         enrollmentService.enrollStudent(studentId, classId, expirationDate);
-        return ResponseEntity.ok("Studentul a fost înscris cu succes până la data de " + expirationDate);
+        return ResponseEntity.ok("Succes");
     }
 
     @Override

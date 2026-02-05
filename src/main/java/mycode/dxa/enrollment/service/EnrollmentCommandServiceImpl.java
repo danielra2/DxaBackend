@@ -10,6 +10,7 @@ import mycode.dxa.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -29,19 +30,26 @@ public class EnrollmentCommandServiceImpl implements EnrollmentCommandService {
 
     @Override
     public void enrollStudent(Long studentId, Long classId, LocalDate expirationDate) {
-        if (enrollmentRepository.existsByStudentIdAndDanceClassId(studentId, classId)) {
-            throw new RuntimeException("Studentul este deja înscris la acest curs!");
+        Optional<Enrollment> existing = enrollmentRepository.findByStudentIdAndDanceClassId(studentId, classId);
+
+        if (existing.isPresent()) {
+            // Dacă există deja, doar actualizăm data (Reînnoire)
+            Enrollment enrollment = existing.get();
+            enrollment.setExpirationDate(expirationDate);
+            enrollment.setStatus(EnrollmentStatus.ACTIVE);
+            enrollmentRepository.save(enrollment);
+        } else {
+            // Dacă nu există, creăm o înscriere nouă
+            User student = userRepository.findById(studentId).orElseThrow(() -> new RuntimeException("Student negăsit"));
+            DanceClass danceClass = danceClassRepository.findById(classId).orElseThrow(() -> new RuntimeException("Curs negăsit"));
+
+            Enrollment enrollment = new Enrollment();
+            enrollment.setStudent(student);
+            enrollment.setDanceClass(danceClass);
+            enrollment.setExpirationDate(expirationDate);
+            enrollment.setStatus(EnrollmentStatus.ACTIVE);
+            enrollmentRepository.save(enrollment);
         }
-
-        User student = userRepository.findById(studentId).orElseThrow(() -> new RuntimeException("Studentul nu există!"));
-        DanceClass danceClass = danceClassRepository.findById(classId).orElseThrow(() -> new RuntimeException("Cursul nu există!"));
-
-        Enrollment enrollment = new Enrollment();
-        enrollment.setStudent(student);
-        enrollment.setDanceClass(danceClass);
-        enrollment.setExpirationDate(expirationDate); // Salvare dată individuală
-        enrollment.setStatus(EnrollmentStatus.ACTIVE);
-        enrollmentRepository.save(enrollment);
     }
 
     @Override

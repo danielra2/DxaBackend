@@ -11,10 +11,8 @@ public record UserResponse(
         String phone,
         String status,
         LocalDate subscriptionExpirationDate,
-
-        // Date financiare
         Double lastPaymentAmount,
-        Double nextPaymentAmount, // <--- Câmp Adăugat
-
+        Double nextPaymentAmount,
+        String lastPaymentComment,
         List<EnrolledClassDto> enrolledClasses
 ) {}

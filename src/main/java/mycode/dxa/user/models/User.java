@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import mycode.dxa.classes.models.DanceClass;
 import mycode.dxa.enrollment.models.Enrollment;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -49,9 +48,12 @@ public class User {
     @Column(name = "last_payment_amount")
     private Double lastPaymentAmount;
 
+    // --- CÂMP NOU PENTRU ISTORIC COMENTARII ---
+    @Column(name = "last_payment_comment")
+    private String lastPaymentComment;
+
     @Column(name = "next_payment_amount")
     private Double nextPaymentAmount;
-
 
     @Enumerated(EnumType.STRING)
     @Column(name = "last_payment_method")
@@ -64,19 +66,4 @@ public class User {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<Enrollment> enrollments;
-
-    public String getStatus() {
-        if (subscriptionExpirationDate == null) {
-            return "Inactive";
-        }
-        if (subscriptionExpirationDate.isAfter(LocalDate.now()) || subscriptionExpirationDate.isEqual(LocalDate.now())) {
-            return "Active";
-        }
-        return "Inactive";
-    }
-
-
-    public void setStatus(String status) {
-    }
-
 }

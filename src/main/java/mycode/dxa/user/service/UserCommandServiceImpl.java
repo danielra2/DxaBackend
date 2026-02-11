@@ -51,19 +51,14 @@ public class UserCommandServiceImpl implements UserCommandService {
         User student = userMapper.mapCreateStudentDtoToUser(dto);
         student.setPassword(passwordEncoder.encode(dto.password()));
 
-        // 3. Logică pentru Comentariu Plată (Motiv reducere / Notă)
-        // Dacă s-a introdus o sumă, gestionăm comentariul
+
         if (dto.lastPaymentAmount() != null && dto.lastPaymentAmount() > 0) {
-            // Dacă din frontend vine un comentariu specific, îl salvăm pe acela
             if (dto.lastPaymentComment() != null && !dto.lastPaymentComment().isBlank()) {
                 student.setLastPaymentComment(dto.lastPaymentComment());
             } else {
-                // Altfel punem unul default
                 student.setLastPaymentComment("Plată inițială la înscriere");
             }
         }
-
-        // 4. Salvarea efectivă a studentului în DB
         User savedStudent = userRepository.save(student);
 
         // 5. Înscriere automată la cursurile selectate
@@ -92,10 +87,7 @@ public class UserCommandServiceImpl implements UserCommandService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
-        // Mapăm doar câmpurile care vin în DTO
         userMapper.updateUserFromDto(dto, user);
-
-        // Salvăm utilizatorul
         User savedUser = userRepository.save(user);
 
         // IMPORTANT: Returnăm răspunsul fără a declanșa alte logici automate de update pe înscrieri aici,

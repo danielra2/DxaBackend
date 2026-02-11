@@ -2,6 +2,7 @@ package mycode.dxa.classes.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+import mycode.dxa.attendance.models.Attendance;
 import mycode.dxa.enrollment.models.Enrollment;
 import mycode.dxa.user.models.User;
 import java.util.List;
@@ -39,4 +40,9 @@ public class DanceClass {
     @OneToMany(mappedBy = "danceClass", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<Enrollment> enrollments;
+
+    @OneToMany(mappedBy = "danceClass", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<Attendance> attendances;
+
 }

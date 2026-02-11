@@ -10,6 +10,7 @@ import mycode.dxa.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -47,6 +48,7 @@ public class EnrollmentCommandServiceImpl implements EnrollmentCommandService {
             enrollment.setStudent(student);
             enrollment.setDanceClass(danceClass);
             enrollment.setExpirationDate(expirationDate);
+            enrollment.setEnrolledAt(LocalDateTime.now());
             enrollment.setStatus(EnrollmentStatus.ACTIVE);
             enrollmentRepository.save(enrollment);
         }
